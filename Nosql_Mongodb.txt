@@ -1,0 +1,135 @@
+-------------------DATABASE------------------------
+
+*use zovia ---> Create the db name and switches to zovia
+show dbs
+db
+db.dropDatabase() --> current database is dropped
+
+-----------------CREATE THE COLLECTION -----------------
+
+db.createCollection("productCatalog")
+show collections
+db.collections_name.drop()
+
+------------------CREATE THE DOCUMENT-----------------
+
+db.productCatalog.insert({})
+db.prodcutCatalog.insertMany({},{})
+
+Type:JSON
+Fields
+pid:int
+price:float
+colors:array
+categories:object
+avalible:boolean--true,false
+
+Single Product:
+db.productCatalog.insert( {pid:1, pname:"Iphone7", price:5000.0000, colors:["Green","Black","Orange"], categories:{"main":"electronic","sub":"Smartphones"}, available:true } )
+
+MULTIPLE PRODUCTS:
+db.productCatalog.insert([{pid:4, pname:"ASUSLAPTOP", price:30000.0000, colors:["Green","Black","Orange"], categories:{"main":"electronic","sub":"laptop"}, available:true },
+{pid:5, pname:"OppoHeadphones", price:12000.0000, colors:["Green","Black","Orange"], categories:{"main":"electronic","sub":"Headphones"}, available:true }] )
+
+-------SELECTING THE DOCUMENTS--------------------------
+
+db.productCatalog.find().pretty()---> gives the list of the all documents
+
+-->QUERIES, PROJECTIONS
+db.productCatalog.find({query},{projection})
+
+projection--> what fields you need to show
+Query-->Parameter filtering
+db.productCatalog.find({"pname":"ASUSLAPTOP"}).pretty()
+db.productCatalog.find({"pname":"ASUSLAPTOP"},{_id:0}).pretty()--->_id is hidden
+
+---->SUB DOCUMENT----------------
+db.productCatalog.find({"categories.main":"electronic"})
+db.productCatalog.find({"categories.sub":"SmartWatches"},{_id:0}).pretty()
+//array
+db.productCatalog.find({"colors":"Black"}).pretty()
+
+--->ARRAY SEARCHING--------------
+
+$and 
+db.productCatalog.find({$and:[{"categories.main":"electronic"},{"categories.sub":"Headphones"},{"price":{$gt:1200}}]},{_Id:0});
+$or
+db.productCatalog.find({$or:[{"categories.main":"electronic"},{"categories.sub":"Headphones"},{"price":{$gt:1200}}]},{_Id:0});
+$nor
+db.productCatalog.find({$nor:[{"categories.main":"electronic"},{"categories.sub":"Headphones"},{"price":{$gt:1200}}]},{_Id:0});
+$not
+db.productCatalog.find({"price":{$not:{$gt:1200}}},{_id:0}).pretty()
+
+--->Operators
+
+$gt
+db.productCatalog.find({"price":{$gt:12000}}).pretty()
+$lt
+db.productCatalog.find({"price":{$lt:12000}}).pretty()
+$eq
+db.productCatalog.find({"price":{$eq:12000}}).pretty()
+$neq
+db.productCatalog.find({"price":{$neq:12000}}).pretty()
+$gte
+similar
+$lte
+similar
+$in
+db.productCatalog.find({"categories.main":{$in:["electronic","Fashion"]}}).pretty()
+$notin
+db.productCatalog.find({"categories.main":{$nin:["electronic","Fashion"]}}).pretty()
+dual parameters
+db.productCatalog.find({"price":{$gt:12000,$lte:30000}}).pretty()
+
+array operations
+$all
+db.productCatalog().find({"colors":{$all:[]}}).pretty()
+db.productCatalog.find({"colors":{$all:["Black"]}}).pretty()
+$elemMatch
+db.productCatalog.find({"sizes":{$elemMatch:{$gt:40, $lt:45}}},{_id:0});
+$size
+db.productCatalog.find({"colors":{$size:3}},{_id:0}).pretty();
+
+
+-->APPLY THE FILTERS ---> MULITPLE PARAMETERS
+
+
+---------------UPDATING-------------------
+update without upset:true---> if you set upset to be true it will create the field if it not exist
+Update---> one match record --> one first matches
+db.productCatalog.update({"categories.main":"electronic"},{$set:{"releaseDate": Date(2020-02-09)}})
+updateMany-->all matched
+db.productCatalog.updateMany({"categories.main":"electronic"},{$set:{"releaseDate": Date(2020-02-09)}})
+
+
+---------------DELETING-------------------
+i)deleteOne---> it delete first one matches
+ii)deleteMany ---> it deletes the all matched ones
+db.productCatalog.deleteOne({"price":{$gt:2000000}})
+
+Note:Most of the times we perfom the Many operations only
+
+-------------------CREATING THE INDEXES IN MONGODB-----------------------
+They are two types of index
+i)Ascending index 1
+ii)Descending index -1
+Create:
+db.collections_name.createIndex({"":-1})
+View:
+db.collections_name.getIndexes()
+Delete:
+db.collections_name.dropIndex("Index_name")
+Types of Index:
+single Field: 
+db.employees.createIndex({"salary":1/-1})
+Multiple Field --> Compound indexes:
+db.employees.createIndex({"salary":1,"department":1})
+Text Index:
+
+---------------------Aggreation Queries ---------------------------------
+
+ 
+
+
+------------------SHARDING--->PIECE OF THE LARGE DATABASE-----------------------------------
+
